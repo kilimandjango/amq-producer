@@ -12,7 +12,7 @@ spec:
     dockerStrategy:
       from:
         kind: ImageStreamTag
-        name: openshift/redhat-openjdk18-openshift:latest
+        name: openjdk18-openshift:latest
       noCache: true
       env:
         -
