@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: amq-producer-s2i
+  xpaas: 1.0.0
+metadata:
+  annotations:
+    description: amq-producer-s2i template
+    tags: amq-producer-s2i
+    version: 1.0.0
+  creationTimestamp: null
+  name: amq-producer-s2i
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The web server's http port.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - name: 8080-http
+      port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+- apiVersion: v1
+  id: ${APPLICATION_NAME}
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for application's http service.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    port:
+      targetPort: 8080-http
+    to:
+      name: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APPLICATION_NAME}:latest
+    source:
+      contextDir: ${CONTEXT_DIR}
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+      contextDir: "producer"
+    strategy:
+      sourceStrategy:
+        env:
+        - name: GIT_SSL_NO_VERIFY
+          value: "true"
+        - name: TZ
+          value: Europe/Berlin
+        - name: JAVA_TOOL_OPTIONS
+          value: -Dfile.encoding=UTF-8
+        forcePull: true
+        from:
+          kind: ImageStreamTag
+          name: amq-producer-s2i:latest
+          namespace: amq-test
+      type: Source
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ${APPLICATION_NAME}
+          deploymentConfig: ${APPLICATION_NAME}
+        name: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - env:
+          - name: TZ
+            value: Europe/Berlin
+          - name: JAVA_TOOL_OPTIONS
+            value: -Dfile.encoding=UTF-8
+          image: ${APPLICATION_NAME}
+          imagePullPolicy: Always
+          name: ${APPLICATION_NAME}
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              memory: 256Mi
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - ${APPLICATION_NAME}
+        from:
+          kind: ImageStreamTag
+          name: ${APPLICATION_NAME}:latest
+      type: ImageChange
+    - type: ConfigChange
+parameters:
+- description: The name for the application.
+  name: APPLICATION_NAME
+  required: true
+  value: consumer-app
+- description: Git source URI for application
+  name: SOURCE_REPOSITORY_URL
+  required: true
+- description: Git branch/tag reference
+  name: SOURCE_REPOSITORY_REF
+- description: Path within Git project to build; empty for root project directory.
+  name: CONTEXT_DIR
