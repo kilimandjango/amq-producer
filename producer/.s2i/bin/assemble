@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Hello ${BUILD_URL}"
+curl -v --insecure -o /tmp/producer.jar  ${BUILD_URL}artifact/target/consumer-jar-with-dependencies.jar
