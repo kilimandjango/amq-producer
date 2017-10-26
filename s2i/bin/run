@@ -1,0 +1,3 @@
+#!/bin/bash
+echo /tmp/amq-producer.jar
+java -Xmx1024m -Xms256m -jar /tmp/amqproducer.jar

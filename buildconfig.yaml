@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  name: amq-producer-builder-image
+spec:
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/kilimandjango/amq-producer.git'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: openshift/redhat-openjdk18-openshift:latest
+      noCache: true
+      env:
+        -
+          name: GIT_SSL_NO_VERIFY
+          value: 'true'
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'amq-producer-image-builder:latest'
+  resources: {  }
+  
