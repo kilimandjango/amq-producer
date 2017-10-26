@@ -21,7 +21,7 @@ timestamps {
               }
             }
           	stage("checkout"){
-                openshiftImageStream name: 'redhat-openjdk18-openshift', tag: 'latest', verbose: 'false'
+                openshiftImageStream name: 'openjdk18-openshift', tag: 'latest', verbose: 'false'
            		deleteDir()
             	checkout(scm)
                 gitUrl = sh returnStdout: true, script: 'git config remote.origin.url'
