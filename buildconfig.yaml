@@ -13,7 +13,7 @@ spec:
       from:
         kind: ImageStreamTag
         name: openjdk18-openshift:latest
-      noCache: true
+      noCache: false
       env:
         -
           name: GIT_SSL_NO_VERIFY
