@@ -1,6 +1,6 @@
 #!groovy
-def String mailTo = "XXX"
-def String newVersion
+String mailTo = "kilian.henneboehle@mailbox.org"
+def appName
 
 @NonCPS
 def notifyEveryUnstableBuild(String mailTo) {
@@ -10,7 +10,7 @@ def notifyEveryUnstableBuild(String mailTo) {
 timestamps {
     catchError {
         node {      
-			def appName = "amq-producer-test"  
+			appName = "amq-producer-test"
 			def gitUrl      
             env.SKIP_TLS = 'true'		
             env.PROJECT_NAMESPACE = sh returnStdout: true, script: "cat /run/secrets/kubernetes.io/serviceaccount/namespace"
@@ -32,14 +32,16 @@ timestamps {
            	stage("amq-producer-builder-image OSCP Build") {            
             	openshiftBuild bldCfg: 'amq-producer-builder-image', checkForTriggeredDeployments: 'false', showBuildLogs: 'true', verbose: 'false'
             }          
-            withMaven(maven: 'Maven') {
-              dir("test") {
-              	stage("Testprojekt Maven Build install") {
-                  sh "mvn -B -U -e install -Dmaven.test.failure.ignore=true"
-                    archiveArtifacts '**/target/*.jar'                
-              	}
-              } // end of dir("test")
-            } // Ende withMaven  
+            step{
+                withMaven(maven: 'Maven') {
+                    dir("test") {
+                        stage("Testprojekt Maven Build install") {
+                            sh "mvn -B -U -e install -Dmaven.test.failure.ignore=true"
+                            archiveArtifacts '**/target/*.jar'
+                        }
+                    } // end of dir("test")
+                }
+            } // Ende withMaven
 			stage("Create Testprojekt Resources") {
             	oscpDeleteResource(appName) // Delete Testprojekt Resources
                 	sh """oc new-app -f amq-producer-s2i.yaml -n ${env.PROJECT_NAMESPACE} -l app=${appName} -p \
