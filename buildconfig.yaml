@@ -21,6 +21,6 @@ spec:
   output:
     to:
       kind: ImageStreamTag
-      name: 'amq-producer-image-builder:latest'
+      name: 'amq-producer-builder-image:latest'
   resources: {  }
   
