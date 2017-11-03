@@ -32,16 +32,12 @@ timestamps {
            	stage("amq-producer-builder-image OSCP Build") {            
             	openshiftBuild bldCfg: 'amq-producer-builder-image', checkForTriggeredDeployments: 'false', showBuildLogs: 'true', verbose: 'false'
             }          
-            step{
-                withMaven(maven: 'Maven') {
-                    dir("test") {
-                        stage("Testprojekt Maven Build install") {
-                            sh "mvn -B -U -e install -Dmaven.test.failure.ignore=true"
-                            archiveArtifacts '**/target/*.jar'
-                        }
-                    } // end of dir("test")
+            stage("Maven build"){
+                dir("test") {
+                  sh "mvn -B -U -e install -Dmaven.test.failure.ignore=true"
+                  archiveArtifacts '**/target/*.jar'
                 }
-            } // Ende withMaven
+            } // end of dir("test")
 			stage("Create Testprojekt Resources") {
             	oscpDeleteResource(appName) // Delete Testprojekt Resources
                 	sh """oc new-app -f amq-producer-s2i.yaml -n ${env.PROJECT_NAMESPACE} -l app=${appName} -p \
