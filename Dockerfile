@@ -11,7 +11,7 @@ COPY ./contrib/amq-s2i /usr/local/bin
 
 USER root
 
-RUN echo whoami
+RUN whoami
 
 RUN yum-config-manager --disable epel >/dev/null || : && \
     yum-config-manager --enable rhel-7-server-ose-3.6-rpms || : && \
