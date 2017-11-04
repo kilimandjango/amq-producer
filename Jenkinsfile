@@ -38,7 +38,7 @@ timestamps {
                     env.PATH = "${tool 'm3'}/bin:${env.PATH}"
                     configFileProvider(
                             [configFile(fileId: '8858527d-791a-4ed2-aa51-51a5ad392f97', variable: 'MAVEN_SETTINGS')]) {
-                        sh 'mvn -X -B -U -e -Dmaven.test.failure.ignore=true -s $MAVEN_SETTINGS install'
+                        sh 'mvn -X -B -U -e -Dmaven.test.failure.ignore=true -s $MAVEN_SETTINGS clean package'
                     }
 
                   archiveArtifacts '**/target/*.jar'
