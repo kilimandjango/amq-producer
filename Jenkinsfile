@@ -35,8 +35,8 @@ timestamps {
             stage("Maven build"){
 
                 dir("test") {
+                    def mvnHome = tool 'm3'
                     configFileProvider(
-                            def mvnHome = tool 'm3'
                             [configFile(fileId: '8858527d-791a-4ed2-aa51-51a5ad392f97', variable: 'MAVEN_SETTINGS')]) {
                         sh '${mvnHome}/bin/mvn -X -B -U -e -Dmaven.test.failure.ignore=true -s $MAVEN_SETTINGS install'
                     }
