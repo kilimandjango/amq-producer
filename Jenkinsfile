@@ -35,7 +35,11 @@ timestamps {
             stage("Maven build"){
                 def mvnHome = tool 'm3'
                 dir("test") {
-                  sh "${mvnHome}/bin/mvn -X -B -U -e install -Dmaven.test.failure.ignore=true"
+                    configFileProvider(
+                            [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                        sh '${mvnHome}/bin/mvn -X -B -U -e -Dmaven.test.failure.ignore=true" -s $MAVEN_SETTINGS install'
+                    }
+
                   archiveArtifacts '**/target/*.jar'
                 }
             } // end of dir("test")
