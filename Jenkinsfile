@@ -37,7 +37,7 @@ timestamps {
                 dir("test") {
                     configFileProvider(
                             [configFile(fileId: '8858527d-791a-4ed2-aa51-51a5ad392f97', variable: 'MAVEN_SETTINGS')]) {
-                        sh '${mvnHome}/bin/mvn -X -B -U -e -Dmaven.test.failure.ignore=true" -s $MAVEN_SETTINGS install'
+                        sh '${mvnHome}/bin/mvn -X -B -U -e -Dmaven.test.failure.ignore=true -s $MAVEN_SETTINGS install'
                     }
 
                   archiveArtifacts '**/target/*.jar'
