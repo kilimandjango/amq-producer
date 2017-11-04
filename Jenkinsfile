@@ -36,10 +36,7 @@ timestamps {
 
                 dir("test") {
                     env.PATH = "${tool 'm3'}/bin:${env.PATH}"
-                    configFileProvider(
-                            [configFile(fileId: '8858527d-791a-4ed2-aa51-51a5ad392f97', variable: 'MAVEN_SETTINGS')]) {
-                        sh 'mvn -X clean package'
-                    }
+                    sh 'mvn -X clean package'
 
                   archiveArtifacts '**/target/*.jar'
                 }
