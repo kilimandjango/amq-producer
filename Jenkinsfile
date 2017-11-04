@@ -35,7 +35,7 @@ timestamps {
             stage("Maven build"){
                 def mvnHome = tool 'm3'
                 dir("test") {
-                  sh "${mvnHome}/bin/mvn -B -U -e install -Dmaven.test.failure.ignore=true"
+                  sh "${mvnHome}/bin/mvn -X -B -U -e install -Dmaven.test.failure.ignore=true"
                   archiveArtifacts '**/target/*.jar'
                 }
             } // end of dir("test")
