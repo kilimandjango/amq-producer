@@ -36,7 +36,7 @@ timestamps {
                 def mvnHome = tool 'm3'
                 dir("test") {
                     configFileProvider(
-                            [configFile(fileId: 'maven-settings', variable: 'MAVEN_SETTINGS')]) {
+                            [configFile(fileId: 'MyGlobalSettings', variable: 'MAVEN_SETTINGS')]) {
                         sh '${mvnHome}/bin/mvn -X -B -U -e -Dmaven.test.failure.ignore=true" -s $MAVEN_SETTINGS install'
                     }
 
